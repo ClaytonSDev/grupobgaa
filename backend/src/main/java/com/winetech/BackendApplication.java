@@ -7,27 +7,21 @@ import io.github.cdimascio.dotenv.Dotenv;
 @SpringBootApplication
 public class BackendApplication {
 
-	// ESTE É O BLOCO DE CARREGAMENTO E DIAGNÓSTICO.
-	// Ele é executado antes do main() e antes da inicialização do Spring.
 	static {
-		Dotenv dotenv = null;
 		try {
-			dotenv = Dotenv.configure()
+			Dotenv dotenv = Dotenv.configure()
 					.ignoreIfMalformed()
 					.load();
 
-			// TENTATIVA: Injeta as variáveis no System Properties
+			// Injeta variáveis no System Properties
 			dotenv.entries().forEach(entry -> {
 				System.setProperty(entry.getKey(), entry.getValue());
 			});
 
-			// DIAGNÓSTICO: Estas linhas mostram o que foi REALMENTE carregado.
-			System.out.println("DIAGNÓSTICO: DB_USERNAME carregado: " + dotenv.get("DB_USERNAME"));
-			System.out.println("DIAGNÓSTICO: DB_PASSWORD carregado: " + dotenv.get("DB_PASSWORD"));
-
+			// Diagnóstico leve (sem expor senhas)
+			System.out.println("Variáveis de ambiente carregadas com sucesso.");
 		} catch (Exception e) {
-			// Isso deve pegar o erro se o arquivo .env não for encontrado
-			System.err.println("ERRO GRAVE DE LEITURA DO ARQUIVO .ENV: " + e.getMessage());
+			System.err.println("Erro ao carregar o arquivo .env: " + e.getMessage());
 		}
 	}
 
