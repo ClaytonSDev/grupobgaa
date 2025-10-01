@@ -1,0 +1,8 @@
+paletas de cores wine tech
+
+
+cor 1:#441e50
+cor 2:#441f4f
+cor 3:#2f1437
+cor 4:#4a3c50
+cor 5:#bebcbf
