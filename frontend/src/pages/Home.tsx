@@ -1,7 +1,10 @@
 import styled from "styled-components";
-import logo from "../assets/logo1.png";
-import destaque1 from "../assets/destaque1.png";
-import bgImage from "../assets/background-tech.png";
+import logo from "../assets/logowineofc.webp";
+import imgwineequipe from "../assets/imgwineequipe.webp";
+import destaque1 from "../assets/imgwineresultado.webp";
+import destaque2 from "../assets/imgsetorial.webp";
+import destaque3 from "../assets/Imgwineparceria.webp";
+import bgImage from "../assets/background-tech.webp";
 import { Link } from "react-router-dom";
 
 const Container = styled.div`
@@ -23,8 +26,27 @@ const Container = styled.div`
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
     z-index: -1;
+  }
+`;
+
+const ContactButton = styled(Link)`
+  margin: 1rem auto 0;
+  padding: 0.6rem 1.2rem;
+  background-color: ${({ theme }) => theme.colors.accent};
+  color: ${({ theme }) => theme.colors.light};
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: ${({ theme }) => theme.fonts.bold};
+  transition: background 0.3s;
+  text-align: center;
+  display: block;
+  width: fit-content;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.secondary};
   }
 `;
 
@@ -153,6 +175,12 @@ const Highlights = styled.div`
     align-items: center;
     justify-content: space-between;
     font-family: ${({ theme }) => theme.fonts.montserrat};
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
 
     @keyframes fadeInUp {
       from {
@@ -184,24 +212,6 @@ const Highlights = styled.div`
       border-radius: 8px;
       margin: 1.5rem 0;
     }
-
-    a {
-      margin: 1rem auto 0;
-      padding: 0.6rem 1.2rem;
-      background-color: ${({ theme }) => theme.colors.accent};
-      color: ${({ theme }) => theme.colors.light};
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: ${({ theme }) => theme.fonts.bold};
-      transition: background 0.3s;
-      text-align: center;
-      display: block;
-      width: fit-content;
-
-      &:hover {
-        background-color: ${({ theme }) => theme.colors.secondary};
-      }
-    }
   }
 
   @media (max-width: 768px) {
@@ -216,10 +226,6 @@ const Highlights = styled.div`
       img {
         margin: 1rem auto;
       }
-
-      a {
-        margin: 1rem auto 0;
-      }
     }
   }
 `;
@@ -230,13 +236,17 @@ const CTA = styled.div`
   color: ${({ theme }) => theme.colors.light};
   font-weight: ${({ theme }) => theme.fonts.bold};
   text-align: center;
+
+  ${ContactButton} {
+    margin-top: 1.5rem;
+  }
 `;
 
 const Home = () => {
   return (
     <Container>
       <Hero>
-        <img src={logo} alt="Logo Wine Tech" />
+        <img src={logo} alt="Logo Wine Tech" loading="lazy" />
         <h1>Bem-vindo à Wine Tech</h1>
         <p>
           Wine Tech: Inovação e Versatilidade em Soluções Digitais.
@@ -249,7 +259,11 @@ const Home = () => {
 
       <Section>
         <div className="image">
-          <img src={destaque1} alt="Imagem Por que a Wine Tech" />
+          <img
+            src={imgwineequipe}
+            alt="Imagem Por que a Wine Tech"
+            loading="lazy"
+          />
         </div>
         <div className="text">
           <h2>Por que a Wine Tech?</h2>
@@ -273,8 +287,14 @@ const Home = () => {
             retorno claro sobre o seu investimento e impulsionar o crescimento
             do seu negócio.
           </p>
-          <img src={destaque1} alt="Soluções que Geram Resultados" />
-          <Link to="/contato">Fale Conosco</Link>
+          <img
+            src={destaque1}
+            alt="Soluções que Geram Resultados"
+            loading="lazy"
+          />
+          <ContactButton to="/contato" aria-label="Ir para página de contato">
+            Fale Conosco
+          </ContactButton>
         </div>
 
         <div className="card">
@@ -284,8 +304,10 @@ const Home = () => {
             educação e muitos outros. Não importa o seu nicho, temos o
             conhecimento para desenvolver a solução perfeita para você.
           </p>
-          <img src={destaque1} alt="Expertise Multissetorial" />
-          <Link to="/contato">Fale Conosco</Link>
+          <img src={destaque2} alt="Expertise Multissetorial" loading="lazy" />
+          <ContactButton to="/contato" aria-label="Ir para página de contato">
+            Fale Conosco
+          </ContactButton>
         </div>
 
         <div className="card">
@@ -295,15 +317,19 @@ const Home = () => {
             Trabalhamos lado a lado com você para garantir que cada etapa do
             projeto seja um sucesso.
           </p>
-          <img src={destaque1} alt="Parceria de Longo Prazo" />
-          <Link to="/contato">Fale Conosco</Link>
+          <img src={destaque3} alt="Parceria de Longo Prazo" loading="lazy" />
+          <ContactButton to="/contato" aria-label="Ir para página de contato">
+            Fale Conosco
+          </ContactButton>
         </div>
       </Highlights>
 
       <CTA>
         Entre em contato e comece a transformar o seu negócio.
         <br />
-        <Link to="/contato">Fale Conosco</Link>
+        <ContactButton to="/contato" aria-label="Ir para página de contato">
+          Fale Conosco
+        </ContactButton>
       </CTA>
     </Container>
   );

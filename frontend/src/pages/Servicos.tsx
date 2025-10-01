@@ -1,6 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
-import destaque1 from "../assets/destaque1.png";
+import destaque1 from "../assets/imgwinesistemas.webp";
+import destaque2 from "../assets/imgwineecomerce.webp";
+import destaque3 from "../assets/imgwineinfraestrutura.webp";
+import destaque4 from "../assets/imgwineconsultoria.webp";
+import destaque5 from "../assets/imgwinemonitoramento.webp";
+import destaque6 from "../assets/imgwineseguranca.webp"; // Corrigido para imagem diferente
 
 const Container = styled.div`
   padding: 80px 1.5rem 40px;
@@ -39,7 +44,7 @@ const Container = styled.div`
   }
 
   .servico-item {
-    background-color: ${({ theme }) => theme.colors.card};
+    background-color: ${({ theme }) => theme.colors.light};
     padding: 1.5rem;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -80,13 +85,13 @@ const Container = styled.div`
     }
 
     img {
-      width: 100%;
-      max-width: 600px;
-      border-radius: 8px;
-      margin-top: 1rem;
-      display: block;
-    }
-  }
+  display: block;
+  margin: 1.5rem auto 0;
+  width: 150px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
 
   @media (max-width: 480px) {
     h1 {
@@ -128,6 +133,7 @@ Criamos sistemas robustos para atender às suas necessidades específicas, seja 
 Nossa equipe está pronta para entender os seus desafios e desenvolver uma tecnologia que seja a base para o sucesso do seu negócio.
 
 Quer saber como uma solução sob medida pode alavancar a sua empresa? Entre em contato e vamos conversar sobre o seu projeto!`,
+    imagem: destaque1,
   },
   {
     titulo: "Desenvolvimento de Sites e E-commerce",
@@ -158,6 +164,7 @@ Transformamos sua ideia de loja online em uma realidade lucrativa, com foco em:
 • Análise de Dados: Você terá acesso a relatórios detalhados para entender o comportamento dos seus clientes, quais produtos vendem mais e como otimizar suas estratégias de vendas.
 
 Nossa equipe está pronta para transformar sua presença digital em uma máquina de vendas. Que tipo de projeto você tem em mente?`,
+    imagem: destaque2,
   },
   {
     titulo: "Infraestrutura de TI e Cloud",
@@ -181,6 +188,7 @@ Oferecemos uma gama completa de serviços para criar e gerenciar uma infraestrut
 • Suporte Técnico Especializado: Sua equipe terá acesso a um suporte técnico proativo para resolver problemas rapidamente e evitar que pequenos imprevistos se tornem grandes dores de cabeça.
 
 Uma infraestrutura de TI bem planejada é a chave para a inovação e o crescimento. Está pronto para levar a sua infraestrutura para o próximo nível?`,
+    imagem: destaque3,
   },
   {
     titulo: "Consultoria em Transformação Digital",
@@ -202,6 +210,7 @@ Trabalhamos lado a lado com sua equipe para entender seus desafios e metas. Noss
 • Análise de Dados: Usamos a análise de dados para monitorar o progresso, identificar tendências e tomar decisões mais inteligentes, garantindo que a sua transformação digital continue gerando valor a longo prazo.
 
 A transformação digital é uma jornada contínua, e estamos aqui para garantir que ela seja bem-sucedida. Pronto para iniciar a sua?`,
+    imagem: destaque4,
   },
   {
     titulo: "Monitoramento Inteligente e Automação",
@@ -221,6 +230,7 @@ Nossos serviços de monitoramento e automação vão muito além de simples aler
 • Otimização Contínua: O sistema não apenas monitora, ele também sugere melhorias e otimizações. Com a automação, ele pode até mesmo ajustar configurações automaticamente para garantir a máxima performance.
 
 Com a nossa solução, sua empresa ganha agilidade, confiabilidade e a capacidade de operar em um novo nível de eficiência. Está pronto para otimizar a sua operação?`,
+    imagem: destaque5,
   },
   {
     titulo: "Integração de Dados e Segurança da Informação",
@@ -247,6 +257,7 @@ A segurança não é um luxo, mas uma necessidade. Nossas soluções de seguran�
 • Backup e Recuperação de Desastres: Criamos planos de backup automatizados e testados para que, em caso de falha de sistema, ataque cibernético ou desastre natural, seus dados possam ser recuperados rapidamente, minimizando o tempo de inatividade e os prejuízos.
 
 Com a nossa ajuda, seus dados estarão organizados, acessíveis e, mais importante, totalmente seguros.`,
+    imagem: destaque6,
   },
 ];
 
@@ -254,7 +265,7 @@ const Servicos = () => {
   const [selecionado, setSelecionado] = useState<number | null>(null);
 
   const toggleServico = (index: number) => {
-    setSelecionado((prev) => (prev === index ? null : index));
+    setSelecionado(selecionado === index ? null : index);
   };
 
   return (
@@ -278,7 +289,11 @@ const Servicos = () => {
             {selecionado === index && (
               <div className="detalhes">
                 <p>{servico.descricao}</p>
-                <img src={destaque1} alt="Imagem ilustrativa do serviço" />
+                <img
+                  src={servico.imagem}
+                  alt={`Imagem ilustrativa de ${servico.titulo}`}
+                  loading="lazy"
+                />
               </div>
             )}
           </div>
