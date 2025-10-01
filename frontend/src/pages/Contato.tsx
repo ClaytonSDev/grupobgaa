@@ -2,11 +2,13 @@ import { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaUser, FaEnvelope, FaCommentDots, FaWhatsapp } from "react-icons/fa";
 
+// ANIMAÇÃO
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
+// CONTAINER PRINCIPAL
 const Container = styled.div`
   padding: 80px 1.5rem 40px;
   background-color: ${({ theme }) => theme.colors.background};
@@ -42,7 +44,7 @@ const Container = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin: 1rem 0 2rem; /* margem inferior aumentada */
+    margin: 1rem 0 2rem;
     font-size: 1.1rem;
     color: #25d366;
     text-decoration: none;
@@ -74,6 +76,7 @@ const Container = styled.div`
   }
 `;
 
+// FORMULÁRIO
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -146,19 +149,25 @@ const Form = styled.form`
   }
 `;
 
-const StatusMessage = styled.p<{ success: boolean }>`
+// MENSAGEM DE STATUS
+const StatusMessage = styled.p.withConfig({
+  shouldForwardProp: (prop) => prop !== "success",
+})<{ success: boolean }>`
   margin-top: 1rem;
   font-size: 1rem;
   font-weight: ${({ theme }) => theme.fonts.light};
   color: ${({ success }) => (success ? "green" : "red")};
 `;
 
+// COMPONENTE PRINCIPAL
 const Contato = () => {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
+    assunto: "",
     mensagem: "",
   });
+
   const [status, setStatus] = useState("");
 
   const API_URL = "http://localhost:8080/api/contato";
@@ -186,7 +195,12 @@ const Contato = () => {
 
       if (response.status === 201) {
         setStatus("Mensagem enviada com sucesso! Código 201 OK.");
-        setFormData({ nome: "", email: "", mensagem: "" });
+        setFormData({
+          nome: "",
+          email: "",
+          assunto: "",
+          mensagem: "",
+        });
       } else {
         setStatus(`Erro ao enviar. Código: ${response.status}.`);
       }
@@ -202,7 +216,7 @@ const Contato = () => {
       <p>
         Vamos conversar sobre o futuro da sua empresa?
         <br />
-        <strong>Email:</strong> contato@winetech.com.br
+        <strong>Email:</strong> winetech33@gmail.com
         <br />
         <strong>Telefone:</strong> (11) 95489-2095
       </p>
