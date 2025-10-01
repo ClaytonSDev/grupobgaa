@@ -80,7 +80,7 @@ const Form = styled.form`
   gap: 1.2rem;
   width: 100%;
   max-width: 500px;
-  background-color: ${({ theme }) => theme.colors.card};
+  background-color: ${({ theme }) => theme.colors.light};
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
@@ -149,7 +149,7 @@ const Form = styled.form`
 const StatusMessage = styled.p<{ success: boolean }>`
   margin-top: 1rem;
   font-size: 1rem;
-  font-weight: ${({ theme }) => theme.fonts.medium};
+  font-weight: ${({ theme }) => theme.fonts.light};
   color: ${({ success }) => (success ? "green" : "red")};
 `;
 
@@ -235,6 +235,17 @@ const Contato = () => {
             placeholder="Seu e-mail"
             name="email"
             value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="field">
+          <FaCommentDots />
+          <input
+            type="text"
+            placeholder="Assunto"
+            name="assunto"
+            value={formData.assunto}
             onChange={handleChange}
             required
           />
