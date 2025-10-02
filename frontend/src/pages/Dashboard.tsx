@@ -28,6 +28,23 @@ const Title = styled.h1`
   margin-bottom: 2rem;
 `;
 
+const Indicadores = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+`;
+
+const Indicador = styled.div`
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.light};
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.2rem;
+`;
+
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -62,32 +79,84 @@ const Card = styled.div`
   }
 `;
 
+const InputBusca = styled.input`
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+`;
+
 const Dashboard = () => {
   const [dadosFinanceiros, setDadosFinanceiros] = useState([]);
+  const [mensagens, setMensagens] = useState([]);
+  const [busca, setBusca] = useState("");
 
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/financeiro")
       .then((res) => setDadosFinanceiros(res.data))
-      .catch((err) => console.error("Erro ao buscar dados:", err));
+      .catch((err) => console.error("Erro ao buscar dados financeiros:", err));
+
+    axios
+      .get("http://localhost:8080/api/contato/todos")
+      .then((res) => setMensagens(res.data))
+      .catch((err) => console.error("Erro ao buscar mensagens:", err));
   }, []);
+
+  const mensagensFiltradas = mensagens.filter(
+    (msg) =>
+      msg.nome.toLowerCase().includes(busca.toLowerCase()) ||
+      msg.assunto.toLowerCase().includes(busca.toLowerCase())
+  );
+
+  const totalFaturado = dadosFinanceiros.reduce(
+    (acc, p) => acc + p.faturamento,
+    0
+  );
 
   return (
     <Container>
       <Title>Painel Administrativo - Wine Tech</Title>
+
+      <Indicadores>
+        <Indicador>💰 Total Faturado: R$ {totalFaturado.toFixed(2)}</Indicador>
+        <Indicador>📨 Mensagens: {mensagens.length}</Indicador>
+        <Indicador>👥 Equipe Ativa: 4</Indicador>
+      </Indicadores>
+
       <Grid>
         <Card>
           <h2>📊 Faturamento por Projeto</h2>
-         <ResponsiveContainer width="100%" height={300}>
-  <BarChart data={dadosFinanceiros}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="projeto" />
-    <YAxis />
-    <Tooltip />
-    <Bar dataKey="faturamento" fill="#82ca9d" />
-  </BarChart>
-</ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dadosFinanceiros}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="projeto" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="faturamento" fill="#82ca9d" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
 
+        <Card>
+          <h2>📥 Mensagens Recebidas</h2>
+          <InputBusca
+            type="text"
+            placeholder="Buscar por nome ou assunto"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+          <ul>
+            {mensagensFiltradas.map((msg) => (
+              <li key={msg.id}>
+                <strong>{msg.nome}</strong> ({msg.email}) —{" "}
+                <em>{msg.assunto}</em>
+                <br />
+                <span>{msg.mensagem}</span>
+              </li>
+            ))}
+          </ul>
         </Card>
 
         <Card>
