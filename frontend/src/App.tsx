@@ -6,6 +6,7 @@ import Sobre from "./pages/Sobre";
 import Servicos from "./pages/Servicos";
 import Contato from "./pages/Contato";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard"; // ✅ Importação do Dashboard
 import LayoutWrapper from "./components/LayoutWrapper";
 
 import whatsappIcon from "./assets/whatsapp-icon.png";
@@ -65,6 +66,8 @@ function App() {
           <Route path="/contato" element={<Contato />} />
           <Route path="/login" element={<Login />} />
         </Route>
+        {/* Rota oculta para o dashboard, sem layout */}
+      <Route path="/admin-dashboard-2025" element={<Dashboard />} />
       </Routes>
 
       <WhatsAppButton
@@ -79,3 +82,4 @@ function App() {
 }
 
 export default App;
+
