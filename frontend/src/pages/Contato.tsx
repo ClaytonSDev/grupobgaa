@@ -108,7 +108,7 @@ const Form = styled.form`
       border: none;
       background: transparent;
       font-size: 1rem;
-      color: ${({ theme }) => theme.colors.text};
+      color: ${({ theme }) => theme.colors.primary};
       font-family: ${({ theme }) => theme.fonts.montserrat};
 
       &:focus {
