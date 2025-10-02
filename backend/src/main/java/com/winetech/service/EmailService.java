@@ -13,12 +13,29 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     public void enviar(MensagemContato mensagem) {
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo("winetech33@gmail.com"); // destino fixo ou dinâmico
-        email.setSubject("Nova mensagem de contato: " + mensagem.getAssunto());
-        email.setText("Nome: " + mensagem.getNome() + "\nEmail: " + mensagem.getEmail() +
-                "\nAssunto: " + mensagem.getAssunto() + "\nMensagem:\n" + mensagem.getMensagem());
+        try {
+            // 1. Email para a WineTech
+            SimpleMailMessage emailParaEmpresa = new SimpleMailMessage();
+            emailParaEmpresa.setTo("winetech33@gmail.com");
+            emailParaEmpresa.setSubject("Nova mensagem de contato: " + mensagem.getAssunto());
+            emailParaEmpresa.setText("Nome: " + mensagem.getNome() + "\nEmail: " + mensagem.getEmail() +
+                    "\nAssunto: " + mensagem.getAssunto() + "\nMensagem:\n" + mensagem.getMensagem());
+            mailSender.send(emailParaEmpresa);
 
-        mailSender.send(email);
+            // 2. Resposta automática para o cliente
+            SimpleMailMessage respostaParaCliente = new SimpleMailMessage();
+            respostaParaCliente.setTo(mensagem.getEmail());
+            respostaParaCliente.setSubject("Recebemos sua mensagem!");
+            respostaParaCliente.setText("Olá " + mensagem.getNome() + ",\n\n" +
+                    "Agradecemos por entrar em contato conosco. Recebemos sua mensagem com o assunto \"" +
+                    mensagem.getAssunto() + "\" e responderemos em breve.\n\n" +
+                    "Atenciosamente,\nEquipe WineTech 🍷");
+            mailSender.send(respostaParaCliente);
+
+            System.out.println("Emails enviados com sucesso!");
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar emails:");
+            e.printStackTrace();
+        }
     }
 }
