@@ -1,4 +1,3 @@
-// src/components/Layout.tsx
 import React from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -8,7 +7,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <>
       <Navbar />
-      <PageWrapper>{children}</PageWrapper>
+      <PageWrapper as="main" id="conteudo-principal">
+        {children}
+      </PageWrapper>
       <Footer />
     </>
   );

@@ -3,7 +3,9 @@ import { Outlet } from "react-router-dom";
 
 const LayoutWrapper = () => (
   <Layout>
-    <Outlet />
+    <main>
+      <Outlet />
+    </main>
   </Layout>
 );
 

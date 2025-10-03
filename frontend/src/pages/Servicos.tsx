@@ -16,7 +16,7 @@ import vidSegurancaWebm from "../videos/seguranca.webm";
 
 /* --------- ESTILOS --------- */
 const Page = styled.div`
-  min-height: 100vh;
+  min-height: 100dvh;
   background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
   font-family: ${({ theme }) => theme.fonts.montserrat};
@@ -26,6 +26,7 @@ const Container = styled.div`
   max-width: 1120px;
   margin: 0 auto;
   padding: 80px 1.25rem 40px;
+  min-width: 0;
 
   @media (max-width: 768px) {
     padding: 72px 1rem 36px;
@@ -59,10 +60,10 @@ const Heading = styled.header`
 const Grid = styled.section`
   display: grid;
   gap: 1.25rem;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
 
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
   @media (max-width: 720px) {
     grid-template-columns: 1fr;
@@ -87,6 +88,11 @@ const Card = styled.article`
   }
   @media (max-width: 720px) {
     grid-column: auto;
+  }
+
+  &:focus-within {
+    outline: 2px solid ${({ theme }) => theme.colors.secondary};
+    outline-offset: 2px;
   }
 `;
 
@@ -148,6 +154,19 @@ const Description = styled.p`
   opacity: 0.95;
 `;
 
+/* --------- HOOK: respeita prefers-reduced-motion para vídeo --------- */
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = React.useState(false);
+  React.useEffect(() => {
+    const query = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    const onChange = () => setReduced(!!query?.matches);
+    onChange();
+    query?.addEventListener?.("change", onChange);
+    return () => query?.removeEventListener?.("change", onChange);
+  }, []);
+  return reduced;
+}
+
 /* --------- DADOS --------- */
 const servicos = [
   {
@@ -196,6 +215,8 @@ const servicos = [
 
 /* --------- COMPONENTE --------- */
 const Servicos: React.FC = () => {
+  const prefersReduced = usePrefersReducedMotion();
+
   return (
     <Page>
       <Container>
@@ -209,12 +230,12 @@ const Servicos: React.FC = () => {
 
         <Grid>
           {servicos.map((s, i) => (
-            <Card key={i}>
+            <Card key={i} tabIndex={-1}>
               <Media>
                 <video
-                  autoPlay
+                  autoPlay={!prefersReduced}
                   muted
-                  loop
+                  loop={!prefersReduced}
                   playsInline
                   preload="metadata"
                   aria-label={`Vídeo ilustrativo: ${s.titulo}`}
