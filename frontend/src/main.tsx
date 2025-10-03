@@ -4,6 +4,8 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./styles/theme";
 import { GlobalStyle } from "./styles/GlobalStyle";
+import './styles/responsive-base.css';
+
 import App from "./App";
 import { UserProvider } from "./contexts/UserContext"; // ✅ Novo contexto de usuário
 

@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaUser, FaEnvelope, FaCommentDots, FaWhatsapp } from "react-icons/fa";
 
-// ANIMAÇÃO
+// ANIMAÇÃO (respeita prefers-reduced-motion no styled-component de Container)
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -14,17 +14,25 @@ const spin = keyframes`
 `;
 
 // CONTAINER PRINCIPAL
-const Container = styled.div`
-  padding: 80px 1.5rem 40px;
+const Container = styled.section`
+  --safe-left: env(safe-area-inset-left);
+  --safe-right: env(safe-area-inset-right);
+  --safe-top: env(safe-area-inset-top);
+
+  padding: 80px max(16px, var(--safe-right)) 40px max(16px, var(--safe-left));
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
-  min-height: 100vh;
+  min-height: 100dvh; /* 100vh -> 100dvh para viewport móvel */
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  animation: ${fadeIn} 1s ease-in;
+  animation: ${fadeIn} 640ms ease-out;
   font-family: ${({ theme }) => theme.fonts.montserrat};
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 
   h1 {
     font-size: clamp(1.5rem, 2.5vw + 1rem, 2.5rem);
@@ -54,22 +62,26 @@ const Container = styled.div`
     color: #25d366;
     text-decoration: none;
     font-weight: ${({ theme }) => theme.fonts.bold};
+    padding: 8px 10px;
+    border-radius: 8px;
 
     &:hover {
       text-decoration: underline;
     }
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
   }
 
   @media (max-width: 768px) {
-    padding-top: 64px;
+    padding-top: calc(64px + var(--safe-top));
   }
-
   @media (max-width: 480px) {
-    padding: 64px 1rem 32px;
+    padding: calc(64px + var(--safe-top)) 1rem 32px;
   }
-
   @media (max-width: 360px) {
-    padding: 56px 0.75rem 24px;
+    padding: calc(56px + var(--safe-top)) 0.75rem 24px;
   }
 `;
 
@@ -81,7 +93,7 @@ const Form = styled.form`
   width: 100%;
   max-width: 560px;
   background-color: ${({ theme }) => theme.colors.light};
-  padding: 2rem;
+  padding: clamp(1.25rem, 3.5vw, 2rem);
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 
@@ -105,7 +117,7 @@ const Form = styled.form`
       flex: 1;
       border: none;
       background: transparent;
-      font-size: 1rem;
+      font-size: 1rem; /* >= 16px para evitar zoom iOS */
       color: ${({ theme }) => theme.colors.primary};
       font-family: ${({ theme }) => theme.fonts.montserrat};
 
@@ -136,7 +148,6 @@ const Form = styled.form`
     &:hover {
       background-color: ${({ theme }) => theme.colors.secondary};
     }
-
     &:disabled {
       opacity: 0.65;
       cursor: not-allowed;
@@ -153,26 +164,6 @@ const Form = styled.form`
       border-top-color: rgba(255, 255, 255, 1);
       border-radius: 50%;
       animation: ${spin} 0.8s linear infinite;
-    }
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.25rem;
-
-    input,
-    textarea,
-    button {
-      font-size: 0.95rem;
-    }
-  }
-
-  @media (max-width: 360px) {
-    gap: 0.9rem;
-    .field {
-      padding: 0.8rem 0.85rem;
-    }
-    button {
-      padding: 0.85rem;
     }
   }
 `;
@@ -199,8 +190,12 @@ const Contato = () => {
   const [status, setStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Evita recriar URL em cada render
-  const API_URL = useMemo(() => "http://localhost:8080/api/contato", []);
+  // Base de API por env, com fallback para localhost
+  const API_URL = useMemo(() => {
+    const base =
+      (import.meta as any)?.env?.VITE_API_BASE_URL || "http://localhost:8080";
+    return `${base.replace(/\/$/, "")}/api/contato`;
+  }, []);
 
   // Guard para evitar múltiplos envios
   const sendingRef = useRef(false);
@@ -209,10 +204,7 @@ const Contato = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -236,12 +228,7 @@ const Contato = () => {
 
       if (response.status === 201) {
         setStatus("Mensagem enviada com sucesso! Código 201 OK.");
-        setFormData({
-          nome: "",
-          email: "",
-          assunto: "",
-          mensagem: "",
-        });
+        setFormData({ nome: "", email: "", assunto: "", mensagem: "" });
       } else {
         setStatus(`Erro ao enviar. Código: ${response.status}.`);
       }
@@ -267,23 +254,31 @@ const Contato = () => {
       <p>
         Vamos conversar sobre o futuro da sua empresa?
         <br />
-        <strong>Email:</strong> winetech33@gmail.com
+        <strong>Email:</strong>{" "}
+        <a href="mailto:winetech33@gmail.com">winetech33@gmail.com</a>
         <br />
-        <strong>Telefone:</strong> (11) 95489-2095
+        <strong>Telefone:</strong>{" "}
+        <a href="tel:+5511985492095">(11) 98549-2095</a>
       </p>
 
       <a
         className="whatsapp"
-        href="https://wa.me/5511954892095"
+        href="https://wa.me/5511985492095"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="Fale direto pelo WhatsApp"
       >
-        <FaWhatsapp /> Fale direto pelo WhatsApp
+        <FaWhatsapp aria-hidden="true" /> Fale direto pelo WhatsApp
       </a>
 
-      <Form onSubmit={handleSubmit} aria-busy={isLoading}>
+      {/* aria-busy deve ser string 'true' | 'false' para validar em todos os linters */}
+      <Form
+        onSubmit={handleSubmit}
+        aria-busy={isLoading ? "true" : "false"}
+        noValidate
+      >
         <div className="field">
-          <FaUser />
+          <FaUser aria-hidden="true" />
           <input
             type="text"
             placeholder="Seu nome"
@@ -293,10 +288,11 @@ const Contato = () => {
             autoComplete="name"
             required
             aria-label="Seu nome"
+            minLength={2}
           />
         </div>
         <div className="field">
-          <FaEnvelope />
+          <FaEnvelope aria-hidden="true" />
           <input
             type="email"
             placeholder="Seu e-mail"
@@ -310,7 +306,7 @@ const Contato = () => {
           />
         </div>
         <div className="field">
-          <FaCommentDots />
+          <FaCommentDots aria-hidden="true" />
           <input
             type="text"
             placeholder="Assunto"
@@ -319,10 +315,11 @@ const Contato = () => {
             onChange={handleChange}
             required
             aria-label="Assunto"
+            minLength={2}
           />
         </div>
         <div className="field">
-          <FaCommentDots />
+          <FaCommentDots aria-hidden="true" />
           <textarea
             placeholder="Sua mensagem"
             name="mensagem"
@@ -330,10 +327,15 @@ const Contato = () => {
             onChange={handleChange}
             required
             aria-label="Sua mensagem"
+            minLength={5}
           />
         </div>
 
-        <button type="submit" disabled={isLoading}>
+        <button
+          type="submit"
+          disabled={isLoading}
+          aria-disabled={isLoading ? "true" : "false"}
+        >
           {isLoading ? "Enviando..." : "Enviar"}
           {isLoading && <span className="spinner" aria-hidden="true" />}
         </button>

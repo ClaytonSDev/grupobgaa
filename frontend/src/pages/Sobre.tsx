@@ -4,19 +4,27 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import bgImage from "../assets/background-sobre.png";
 
-/* ====== Layout base ====== */
+/* ====== Layout base ======
+   - 100dvh para viewport móvel estável
+   - background-attachment: fixed apenas em telas largas (evita jank no mobile)
+   - tipografia e cores herdadas do tema
+*/
 const Page = styled.main`
-  min-height: 100vh;
+  min-height: 100dvh;
   color: ${({ theme }) => theme.colors.text};
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.65)),
     url(${bgImage}) center/cover no-repeat;
-  font-family: ${({ theme }) => theme.fonts.montserrat};
+
+  @media (min-width: 901px) {
+    background-attachment: fixed;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1120px;
   margin: 0 auto;
   padding: 80px 1.25rem 48px;
+  min-width: 0; /* impede filhos de estourarem largura */
 
   @media (max-width: 768px) {
     padding: 72px 1rem 40px;
@@ -84,10 +92,10 @@ const Features = styled.section`
 const FeatureGrid = styled.div`
   display: grid;
   gap: clamp(16px, 3.2vw, 28px);
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
 
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
   @media (max-width: 720px) {
     grid-template-columns: 1fr;
@@ -143,11 +151,11 @@ const Metrics = styled.section`
 const MetricGrid = styled.div`
   display: grid;
   gap: clamp(14px, 2.6vw, 24px);
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   text-align: center;
 
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
   @media (max-width: 720px) {
     grid-template-columns: 1fr;
@@ -289,7 +297,18 @@ const CTA = styled.section`
       transform: translateY(0);
       box-shadow: none;
     }
+    &:focus-visible {
+      outline: 2px solid ${({ theme }) => theme.colors.secondary};
+      outline-offset: 2px;
+    }
   }
+`;
+
+/* Texto do CTA (substitui inline style) */
+const CtaText = styled.p`
+  color: #fff;
+  opacity: 0.95;
+  margin: 0;
 `;
 
 /* ====== Hook simples p/ contadores ====== */
@@ -324,8 +343,7 @@ function useCountUp(
           const start = performance.now();
           const animate = (now: number) => {
             const t = Math.min(1, (now - start) / durationMs);
-            // easeOutCubic
-            const eased = 1 - Math.pow(1 - t, 3);
+            const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
             setValue(Math.round(eased * target));
             if (t < 1) {
               rafRef.current = requestAnimationFrame(animate);
@@ -352,7 +370,7 @@ const Sobre: React.FC = () => {
   const metricsRef = useRef<HTMLDivElement>(null);
 
   const projetos = useCountUp(120, metricsRef); // exemplo
-  const uptime = useCountUp(99, metricsRef); // 99 (vamos exibir 99,9% na label)
+  const uptime = useCountUp(99, metricsRef); // exibe 99,9% na label
   const nps = useCountUp(86, metricsRef);
 
   return (
@@ -403,7 +421,7 @@ const Sobre: React.FC = () => {
         </Features>
 
         <Metrics>
-          <MetricGrid ref={metricsRef}>
+          <MetricGrid ref={metricsRef} aria-label="Métricas">
             <Metric>
               <div className="value">+{projetos}</div>
               <div className="label">projetos entregues</div>
@@ -475,9 +493,7 @@ const Sobre: React.FC = () => {
         </FAQ>
 
         <CTA>
-          <p style={{ color: "#fff", opacity: 0.95, margin: 0 }}>
-            Pronto para começar a próxima fase do seu produto?
-          </p>
+          <CtaText>Pronto para começar a próxima fase do seu produto?</CtaText>
           <Link to="/contato" aria-label="Ir para a página de contato">
             Fale com a Wine Tech
           </Link>
