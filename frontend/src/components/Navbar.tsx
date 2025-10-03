@@ -98,7 +98,7 @@ const NavLinks = styled.div<{ $isOpen: boolean }>`
     cursor: pointer;
 
     &:hover {
-      background-color: ${({ theme }) => theme.colors.accent};
+      background-color: ${({ theme }) => theme.colors.secondary};
       color: ${({ theme }) => theme.colors.text};
     }
   }

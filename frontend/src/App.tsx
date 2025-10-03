@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard"; // ✅ Importação do Dashboard
 import LayoutWrapper from "./components/LayoutWrapper";
 
-import whatsappIcon from "./assets/whatsapp-icon.png";
+import whatsappIcon from "./assets/whatsapp-icon.webp";
 
 const AppContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
