@@ -1,16 +1,14 @@
+// src/theme.ts
 import { DefaultTheme } from "styled-components";
 
 export const theme: DefaultTheme = {
   colors: {
-    background: "#2f1437",
-    text: "#bebcbf",
-    primary: "#441e50",
-    secondary: "#441f4f",
-    accent: "#4a3c50",
+    primary: "#6D2C91",       
+    secondary: "#441e50",   // antes: #d64060
+    accent: "#3BB273",      // antes: #36a269
+    background: "#441f4f",
+    text: "#C9D1D9",
     light: "#FFFFFF",
-    border: "#cccccc",
-    input: "#ffffff",
-    card: "#ffffff", // ✅ Agora reconhecido
   },
   fonts: {
     montserrat: "'Montserrat', sans-serif",
