@@ -4,16 +4,14 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import bgImage from "../assets/background-sobre.png";
 
-/* ====== Layout base ======
-   - 100dvh para viewport móvel estável
-   - background-attachment: fixed apenas em telas largas (evita jank no mobile)
-   - tipografia e cores herdadas do tema
-*/
+/* ====== Layout base ====== */
 const Page = styled.main`
   min-height: 100dvh;
-  color: ${({ theme }) => theme.colors.text};
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.65)),
+  font-family: ${({ theme }) => theme.fonts.montserrat};
+  background:
+    linear-gradient(180deg, rgba(47, 20, 55, 0.85), rgba(47, 20, 55, 0.92)),
     url(${bgImage}) center/cover no-repeat;
+  color: ${({ theme }) => theme.colors.text};
 
   @media (min-width: 901px) {
     background-attachment: fixed;
@@ -24,7 +22,7 @@ const Container = styled.div`
   max-width: 1120px;
   margin: 0 auto;
   padding: 80px 1.25rem 48px;
-  min-width: 0; /* impede filhos de estourarem largura */
+  min-width: 0;
 
   @media (max-width: 768px) {
     padding: 72px 1rem 40px;
@@ -51,7 +49,7 @@ const Hero = styled.header`
     max-width: 820px;
     font-size: clamp(1rem, 0.9vw + 0.7rem, 1.12rem);
     line-height: 1.7;
-    color: ${({ theme }) => theme.colors.light};
+    color: ${({ theme }) => theme.colors.text};
     opacity: 0.95;
     font-weight: ${({ theme }) => theme.fonts.light};
   }
@@ -59,8 +57,8 @@ const Hero = styled.header`
 
 /* ====== Bloco de texto destacado ====== */
 const IntroBlock = styled.section`
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(74, 60, 80, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: ${({ theme }) => theme.colors.light};
   border-radius: 14px;
   padding: 1.2rem 1.1rem;
@@ -80,6 +78,7 @@ const IntroBlock = styled.section`
     font-size: clamp(0.98rem, 0.7vw + 0.68rem, 1.06rem);
     line-height: 1.75;
     font-weight: ${({ theme }) => theme.fonts.light};
+    color: ${({ theme }) => theme.colors.text};
     opacity: 0.95;
   }
 `;
@@ -104,17 +103,18 @@ const FeatureGrid = styled.div`
 
 const Card = styled.article`
   grid-column: span 4;
-  background: ${({ theme }) => theme.colors.light};
-  color: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.card};
+  color: ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 14px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
   padding: 1rem 1rem 1.2rem;
   text-align: center;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
   }
 
   @media (max-width: 1024px) {
@@ -136,14 +136,15 @@ const Card = styled.article`
     font-size: clamp(0.95rem, 0.7vw + 0.7rem, 1rem);
     line-height: 1.65;
     font-weight: ${({ theme }) => theme.fonts.light};
+    color: ${({ theme }) => theme.colors.background};
   }
 `;
 
 /* ====== Métricas com contadores ====== */
 const Metrics = styled.section`
   margin: 28px 0 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(74, 60, 80, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
   padding: 1rem;
 `;
@@ -179,8 +180,8 @@ const Metric = styled.div`
     font-size: clamp(1.3rem, 2.2vw + 0.8rem, 1.8rem);
   }
   .label {
-    color: ${({ theme }) => theme.colors.light};
-    opacity: 0.9;
+    color: ${({ theme }) => theme.colors.text};
+    opacity: 0.95;
     font-size: clamp(0.92rem, 0.6vw + 0.68rem, 1rem);
     font-weight: ${({ theme }) => theme.fonts.light};
   }
@@ -201,10 +202,11 @@ const Steps = styled.ol`
 
 const Step = styled.li`
   position: relative;
-  background: ${({ theme }) => theme.colors.light};
-  color: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.card};
+  color: ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 12px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
   padding: 1rem 1rem 1.1rem;
 
   &:before {
@@ -238,21 +240,23 @@ const Step = styled.li`
     font-size: clamp(0.94rem, 0.6vw + 0.7rem, 1rem);
     line-height: 1.6;
     font-weight: ${({ theme }) => theme.fonts.light};
+    color: ${({ theme }) => theme.colors.background};
   }
 `;
 
-/* ====== FAQ (details/summary) ====== */
+/* ====== FAQ ====== */
 const FAQ = styled.section`
   margin: 40px 0 8px;
 `;
 
 const QA = styled.details`
-  background: ${({ theme }) => theme.colors.light};
-  color: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.card};
+  color: ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 12px;
   padding: 0.9rem 1rem;
   margin-bottom: 0.8rem;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
 
   summary {
     cursor: pointer;
@@ -262,7 +266,7 @@ const QA = styled.details`
     list-style: none;
   }
   &[open] summary {
-    color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.secondary};
   }
 
   p {
@@ -270,6 +274,7 @@ const QA = styled.details`
     font-size: clamp(0.94rem, 0.6vw + 0.7rem, 1rem);
     line-height: 1.6;
     font-weight: ${({ theme }) => theme.fonts.light};
+    color: ${({ theme }) => theme.colors.background};
   }
 `;
 
@@ -287,10 +292,11 @@ const CTA = styled.section`
     color: ${({ theme }) => theme.colors.light};
     text-decoration: none;
     font-weight: ${({ theme }) => theme.fonts.bold};
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 
     &:hover {
       transform: translateY(-1px);
+      background: ${({ theme }) => theme.colors.primary};
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     }
     &:active {
@@ -304,9 +310,8 @@ const CTA = styled.section`
   }
 `;
 
-/* Texto do CTA (substitui inline style) */
 const CtaText = styled.p`
-  color: #fff;
+  color: ${({ theme }) => theme.colors.light};
   opacity: 0.95;
   margin: 0;
 `;
@@ -343,7 +348,7 @@ function useCountUp(
           const start = performance.now();
           const animate = (now: number) => {
             const t = Math.min(1, (now - start) / durationMs);
-            const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+            const eased = 1 - Math.pow(1 - t, 3);
             setValue(Math.round(eased * target));
             if (t < 1) {
               rafRef.current = requestAnimationFrame(animate);
@@ -369,8 +374,8 @@ function useCountUp(
 const Sobre: React.FC = () => {
   const metricsRef = useRef<HTMLDivElement>(null);
 
-  const projetos = useCountUp(120, metricsRef); // exemplo
-  const uptime = useCountUp(99, metricsRef); // exibe 99,9% na label
+  const projetos = useCountUp(120, metricsRef);
+  const uptime = useCountUp(99, metricsRef);
   const nps = useCountUp(86, metricsRef);
 
   return (
