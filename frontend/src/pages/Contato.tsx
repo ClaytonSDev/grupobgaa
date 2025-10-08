@@ -1,185 +1,261 @@
-import { useMemo, useRef, useState } from "react";
-import styled, { keyframes } from "styled-components";
-import { FaUser, FaEnvelope, FaCommentDots, FaWhatsapp } from "react-icons/fa";
+// src/pages/Contato.tsx
+import React, { useMemo, useRef, useState } from "react";
+import styled from "styled-components";
+import { User, Mail, MessageSquare, Phone, Loader2, Send } from "lucide-react";
 
-// ANIMAÇÃO (respeita prefers-reduced-motion no styled-component de Container)
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
+/* ===================== ESTILOS (styled-components) ===================== */
 
-// SPINNER
-const spin = keyframes`
-  to { transform: rotate(360deg); }
-`;
-
-// CONTAINER PRINCIPAL
-const Container = styled.section`
-  --safe-left: env(safe-area-inset-left);
-  --safe-right: env(safe-area-inset-right);
-  --safe-top: env(safe-area-inset-top);
-
-  padding: 80px max(16px, var(--safe-right)) 40px max(16px, var(--safe-left));
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
-  min-height: 100dvh; /* 100vh -> 100dvh para viewport móvel */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  animation: ${fadeIn} 640ms ease-out;
+const Page = styled.section`
+  background: ${({ theme }) => theme.colors.background}; /* #2f1437 */
+  color: ${({ theme }) => theme.colors.light};
   font-family: ${({ theme }) => theme.fonts.montserrat};
+  min-height: 100dvh;
+  display: grid;
+  align-items: center;
+  padding: clamp(56px, 8vw, 96px) clamp(12px, 3vw, 24px);
+`;
 
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
+const Wrapper = styled.div`
+  max-width: 1120px;
+  margin-inline: auto;
+  display: grid;
+  gap: clamp(18px, 3.6vw, 32px);
+  grid-template-columns: 1fr;
 
-  h1 {
-    font-size: clamp(1.5rem, 2.5vw + 1rem, 2.5rem);
-    color: ${({ theme }) => theme.colors.light};
-    margin-bottom: 1rem;
-    font-weight: ${({ theme }) => theme.fonts.bold};
-  }
-
-  p {
-    font-size: clamp(0.95rem, 1vw + 0.6rem, 1.15rem);
-    line-height: 1.7;
-    margin-bottom: 2rem;
-    font-weight: ${({ theme }) => theme.fonts.light};
-
-    strong {
-      font-weight: ${({ theme }) => theme.fonts.bold};
-      color: ${({ theme }) => theme.colors.light};
-    }
-  }
-
-  a.whatsapp {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 1rem 0 2rem;
-    font-size: 1.1rem;
-    color: #25d366;
-    text-decoration: none;
-    font-weight: ${({ theme }) => theme.fonts.bold};
-    padding: 8px 10px;
-    border-radius: 8px;
-
-    &:hover {
-      text-decoration: underline;
-    }
-    &:focus-visible {
-      outline: 2px solid currentColor;
-      outline-offset: 2px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    padding-top: calc(64px + var(--safe-top));
-  }
-  @media (max-width: 480px) {
-    padding: calc(64px + var(--safe-top)) 1rem 32px;
-  }
-  @media (max-width: 360px) {
-    padding: calc(56px + var(--safe-top)) 0.75rem 24px;
+  @media (min-width: 960px) {
+    grid-template-columns: 1.05fr 1fr; /* texto | formulário */
+    align-items: start;
   }
 `;
 
-// FORMULÁRIO
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  width: 100%;
-  max-width: 560px;
-  background-color: ${({ theme }) => theme.colors.light};
-  padding: clamp(1.25rem, 3.5vw, 2rem);
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+const Left = styled.div`
+  text-align: center;
 
-  .field {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background-color: ${({ theme }) => theme.colors.input};
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    border-radius: 10px;
-    padding: 0.9rem 1rem;
-
-    svg {
-      color: ${({ theme }) => theme.colors.accent};
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-
-    input,
-    textarea {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 1rem; /* >= 16px para evitar zoom iOS */
-      color: ${({ theme }) => theme.colors.primary};
-      font-family: ${({ theme }) => theme.fonts.montserrat};
-
-      &:focus {
-        outline: none;
-      }
-    }
-
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
+  @media (min-width: 960px) {
+    text-align: left;
+    padding-right: clamp(8px, 1.5vw, 16px);
   }
+`;
 
-  button {
-    position: relative;
-    padding: 0.95rem;
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.light};
-    border: none;
-    border-radius: 10px;
-    font-weight: ${({ theme }) => theme.fonts.bold};
-    cursor: pointer;
-    transition: background-color 0.3s ease, opacity 0.2s ease;
-    font-size: 1.05rem;
-    touch-action: manipulation;
+const Eyebrow = styled.span`
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: ${({ theme }) => theme.fonts.bold};
+  background: ${({ theme }) => theme.colors.secondary}; /* #441f4f */
+  color: ${({ theme }) => theme.colors.light};
+  margin-bottom: 10px;
+`;
 
-    &:hover {
-      background-color: ${({ theme }) => theme.colors.secondary};
-    }
-    &:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
+const Title = styled.h1`
+  margin: 0 0 10px 0;
+  font-weight: ${({ theme }) => theme.fonts.bold};
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+  color: ${({ theme }) => theme.colors.light};
+  line-height: 1.2;
 
-    .spinner {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      border-top-color: rgba(255, 255, 255, 1);
-      border-radius: 50%;
-      animation: ${spin} 0.8s linear infinite;
+  &::after {
+    content: "";
+    display: block;
+    width: 72px;
+    height: 3px;
+    margin: 10px auto 0;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      ${({ theme }) => theme.colors.primary},
+      ${({ theme }) => theme.colors.secondary}
+    );
+    @media (min-width: 960px) {
+      margin-left: 0;
     }
   }
 `;
 
-// MENSAGEM DE STATUS
-const StatusMessage = styled.p.withConfig({
-  shouldForwardProp: (prop) => prop !== "success",
-})<{ success: boolean }>`
-  margin-top: 1rem;
-  font-size: 0.98rem;
+const Subtitle = styled.p`
+  margin: 12px auto 20px;
+  max-width: 62ch;
+  color: ${({ theme }) => theme.colors.text}; /* #bebcbf */
+  font-size: clamp(1rem, 0.8vw + 0.7rem, 1.12rem);
+  line-height: 1.7;
   font-weight: ${({ theme }) => theme.fonts.light};
-  color: ${({ success }) => (success ? "green" : "red")};
 `;
 
-// COMPONENTE PRINCIPAL
-const Contato = () => {
+const ContactList = styled.div`
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+
+  @media (min-width: 960px) {
+    justify-items: start;
+  }
+`;
+
+const ContactLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.light};
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: ${({ theme }) => theme.colors.primary};
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.accent}; /* #4a3c50 */
+    transform: translateY(-1px);
+  }
+`;
+
+const WhatsAppBtn = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 18px;
+  min-width: 220px;
+
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: ${({ theme }) => theme.fonts.bold};
+  color: ${({ theme }) => theme.colors.light};
+  background: ${({ theme }) => theme.colors.secondary}; /* sem verde */
+
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+  }
+`;
+
+const Card = styled.form`
+  background: ${({ theme }) => theme.colors.card}; /* #ffffff */
+  color: ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.border}; /* #cccccc */
+  border-radius: 16px;
+  padding: clamp(16px, 2.6vw, 26px);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.25);
+
+  display: grid;
+  gap: 14px;
+`;
+
+const Field = styled.label`
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: ${({ theme }) => theme.colors.input}; /* #fff */
+  border: 1px solid ${({ theme }) => theme.colors.border};
+
+  &:focus-within {
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 4px rgba(68, 30, 80, 0.14);
+  }
+
+  svg {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+
+  input,
+  textarea {
+    border: none;
+    background: transparent;
+    color: ${({ theme }) => theme.colors.primary};
+    font-size: 1rem;
+    font-family: ${({ theme }) => theme.fonts.montserrat};
+
+    &::placeholder {
+      color: #8e8e8e;
+      opacity: 0.9;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.5;
+  }
+`;
+
+const Actions = styled.div`
+  display: grid;
+  gap: 10px;
+`;
+
+const Submit = styled.button<{ $loading?: boolean }>`
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: ${({ theme }) => theme.fonts.bold};
+  font-size: 1.06rem;
+
+  color: ${({ theme }) => theme.colors.light};
+  background: ${({ theme }) => theme.colors.primary};
+
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: ${({ theme }) => theme.colors.secondary};
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .spinner {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+`;
+
+const Status = styled.p<{ $ok?: boolean }>`
+  margin: 2px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-align: center;
+
+  background: ${({ $ok, theme }) => ($ok ? theme.colors.secondary : "#5a2b65")};
+  color: ${({ theme }) => theme.colors.light};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  opacity: 0.95;
+`;
+
+/* ===================== COMPONENTE ===================== */
+
+const Contato: React.FC = () => {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
@@ -189,22 +265,18 @@ const Contato = () => {
 
   const [status, setStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  // Base de API por env, com fallback para localhost
-  const API_URL = useMemo(() => {
-    const base =
-      (import.meta as any)?.env?.VITE_API_BASE_URL || "http://localhost:8080";
-    return `${base.replace(/\/$/, "")}/api/contato`;
-  }, []);
-
-  // Guard para evitar múltiplos envios
   const sendingRef = useRef(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const API_URL = useMemo(() => {
+    const base =
+      (typeof process !== "undefined" && (process as any).env?.VITE_API_BASE_URL) ||
+      "https://api.example.com";
+    return `${String(base).replace(/\/$/, "")}/api/contato`;
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -215,28 +287,42 @@ const Contato = () => {
     setIsLoading(true);
     sendingRef.current = true;
 
+    // honeypot simples (anti-bot) — mantido invisível
+    const honey = (document.getElementById("company") as HTMLInputElement | null)?.value;
+    if (honey) {
+      setStatus("Falha na validação.");
+      setIsLoading(false);
+      sendingRef.current = false;
+      return;
+    }
+
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
     try {
-      const response = await fetch(API_URL, {
+      const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
         signal: controller.signal,
       });
 
-      if (response.status === 201) {
-        setStatus("Mensagem enviada com sucesso! Código 201 OK.");
+      if (res.ok || res.status === 201) {
+        setStatus("Mensagem enviada com sucesso! Entraremos em contato em breve.");
         setFormData({ nome: "", email: "", assunto: "", mensagem: "" });
       } else {
-        setStatus(`Erro ao enviar. Código: ${response.status}.`);
+        let detail = res.statusText || `Código: ${res.status}`;
+        try {
+          const j = await res.json();
+          detail = j?.message || detail;
+        } catch {}
+        setStatus(`Erro ao enviar: ${detail}.`);
       }
-    } catch (error: any) {
-      if (error?.name === "AbortError") {
-        setStatus("Tempo de resposta excedido. Tente novamente.");
+    } catch (err: any) {
+      if (err?.name === "AbortError") {
+        setStatus("Tempo de resposta excedido (timeout). Tente novamente.");
       } else {
-        console.error("Erro:", error);
+        console.error(err);
         setStatus("Falha na conexão com o servidor.");
       }
     } finally {
@@ -246,107 +332,125 @@ const Contato = () => {
     }
   };
 
-  const isSuccess = status.startsWith("Mensagem");
+  const isSuccess = status.startsWith("Mensagem enviada");
 
   return (
-    <Container>
-      <h1>Fale Conosco</h1>
-      <p>
-        Vamos conversar sobre o futuro da sua empresa?
-        <br />
-        <strong>Email:</strong>{" "}
-        <a href="mailto:winetech33@gmail.com">winetech33@gmail.com</a>
-        <br />
-        <strong>Telefone:</strong>{" "}
-        <a href="tel:+5511985492095">(11) 98549-2095</a>
-      </p>
+    <Page id="contato" aria-label="Seção de Contato">
+      <Wrapper>
+        {/* Lado esquerdo: título + contatos + WhatsApp */}
+        <Left>
+          <Eyebrow>Contato</Eyebrow>
+          <Title>Vamos conversar sobre o futuro da sua empresa?</Title>
+          <Subtitle>
+            Preencha o formulário ou, se preferir, fale direto pelos nossos canais.
+            Respondemos rápido e com objetividade.
+          </Subtitle>
 
-      <a
-        className="whatsapp"
-        href="https://wa.me/5511985492095"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Fale direto pelo WhatsApp"
-      >
-        <FaWhatsapp aria-hidden="true" /> Fale direto pelo WhatsApp
-      </a>
+          <ContactList>
+            <ContactLink href="mailto:winetech33@gmail.com" aria-label="Envie um e-mail para winetech33@gmail.com">
+              <Mail /> winetech33@gmail.com
+            </ContactLink>
+            <ContactLink href="tel:+5511985492095" aria-label="Ligue para (11) 98549-2095">
+              <Phone /> (11) 98549-2095
+            </ContactLink>
 
-      {/* aria-busy deve ser string 'true' | 'false' para validar em todos os linters */}
-      <Form
-        onSubmit={handleSubmit}
-        aria-busy={isLoading ? "true" : "false"}
-        noValidate
-      >
-        <div className="field">
-          <FaUser aria-hidden="true" />
+            <WhatsAppBtn
+              href="https://wa.me/5511985492095"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Fale direto pelo WhatsApp"
+            >
+              <Phone size={18} aria-hidden /> Fale no WhatsApp
+            </WhatsAppBtn>
+          </ContactList>
+        </Left>
+
+        {/* Formulário */}
+        <Card onSubmit={handleSubmit} noValidate aria-busy={isLoading ? "true" : "false"}>
+          {/* Honeypot (escondido a leitores) */}
           <input
+            id="company"
+            name="company"
             type="text"
-            placeholder="Seu nome"
-            name="nome"
-            value={formData.nome}
-            onChange={handleChange}
-            autoComplete="name"
-            required
-            aria-label="Seu nome"
-            minLength={2}
+            tabIndex={-1}
+            autoComplete="off"
+            style={{ position: "absolute", left: "-5000px", opacity: 0, width: 1, height: 1 }}
+            aria-hidden="true"
           />
-        </div>
-        <div className="field">
-          <FaEnvelope aria-hidden="true" />
-          <input
-            type="email"
-            placeholder="Seu e-mail"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            autoComplete="email"
-            inputMode="email"
-            required
-            aria-label="Seu e-mail"
-          />
-        </div>
-        <div className="field">
-          <FaCommentDots aria-hidden="true" />
-          <input
-            type="text"
-            placeholder="Assunto"
-            name="assunto"
-            value={formData.assunto}
-            onChange={handleChange}
-            required
-            aria-label="Assunto"
-            minLength={2}
-          />
-        </div>
-        <div className="field">
-          <FaCommentDots aria-hidden="true" />
-          <textarea
-            placeholder="Sua mensagem"
-            name="mensagem"
-            value={formData.mensagem}
-            onChange={handleChange}
-            required
-            aria-label="Sua mensagem"
-            minLength={5}
-          />
-        </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          aria-disabled={isLoading ? "true" : "false"}
-        >
-          {isLoading ? "Enviando..." : "Enviar"}
-          {isLoading && <span className="spinner" aria-hidden="true" />}
-        </button>
-      </Form>
+          <Field>
+            <User aria-hidden />
+            <input
+              type="text"
+              placeholder="Seu nome"
+              name="nome"
+              value={formData.nome}
+              onChange={handleChange}
+              autoComplete="name"
+              minLength={2}
+              required
+              aria-label="Seu nome"
+            />
+          </Field>
 
-      {status && (
-        <StatusMessage success={isSuccess} role="status" aria-live="polite">
-          {status}
-        </StatusMessage>
-      )}
-    </Container>
+          <Field>
+            <Mail aria-hidden />
+            <input
+              type="email"
+              placeholder="Seu e-mail"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              autoComplete="email"
+              inputMode="email"
+              required
+              aria-label="Seu e-mail"
+            />
+          </Field>
+
+          <Field>
+            <MessageSquare aria-hidden />
+            <input
+              type="text"
+              placeholder="Assunto"
+              name="assunto"
+              value={formData.assunto}
+              onChange={handleChange}
+              minLength={2}
+              required
+              aria-label="Assunto"
+            />
+          </Field>
+
+          <Field>
+            <MessageSquare aria-hidden />
+            <textarea
+              placeholder="Sua mensagem"
+              name="mensagem"
+              value={formData.mensagem}
+              onChange={handleChange}
+              minLength={5}
+              required
+              aria-label="Sua mensagem"
+              rows={5}
+            />
+          </Field>
+
+          <Actions>
+            <Submit type="submit" disabled={isLoading} $loading={isLoading}>
+              {isLoading ? "Enviando..." : "Enviar"}
+              {isLoading ? (
+                <Loader2 className="spinner" size={18} aria-hidden />
+              ) : (
+                <Send size={18} aria-hidden />
+              )}
+            </Submit>
+
+            {status && <Status $ok={isSuccess} role="status" aria-live="polite">{status}</Status>}
+          </Actions>
+        </Card>
+      </Wrapper>
+    </Page>
   );
 };
 

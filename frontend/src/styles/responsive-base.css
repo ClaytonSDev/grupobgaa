@@ -1,283 +1,125 @@
-/* ===========================================
-   Base de responsividade e acessibilidade
-   =========================================== */
+/* ===========================================================
+   RESET & BASE
+   =========================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-/* Mídia flexível */
-img,
-video,
-canvas,
-svg {
+html {
+  -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+          text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #441f4f;
+  color: #C9D1D9;
+  line-height: 1.5; /* Melhor legibilidade */
+}
+
+/* ===========================================================
+   TIPOGRAFIA
+   =========================================================== */
+h1, h2, h3, h4, h5, h6, p, li, blockquote {
+  overflow-wrap: break-word;
+  word-break: break-word; /* Mais eficaz que 'normal' */
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  margin: 0; /* Evita espaçamentos inesperados */
+}
+
+/* ===========================================================
+   LINKS
+   =========================================================== */
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ===========================================================
+   IMAGENS & MÍDIA
+   =========================================================== */
+img, video {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-/* iframes precisam de wrapper pra serem realmente responsivos */
-.responsive-embed {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9; /* ajuste se precisar */
-  overflow: hidden;
-}
-.responsive-embed > iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-/* Tipografia que quebra melhor em telas menores */
-html {
-  hyphens: auto;
-  -webkit-hyphens: auto;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-li,
-blockquote {
-  overflow-wrap: break-word; /* menos agressivo que anywhere */
-  word-break: normal;
-  hyphens: auto; /* melhora hifenização */
-  -webkit-hyphens: auto; /* suporte iOS < 17 */
-}
-
-/* Inputs acessíveis: evita zoom forçado em iOS */
-input,
-select,
-textarea {
-  font-size: 16px;
-  max-width: 100%;
-}
-button {
-  touch-action: manipulation;
-}
-
-/* Viewport moderna (corrige salto da barra no mobile) */
-:root {
-  --safe-left: env(safe-area-inset-left);
-  --safe-right: env(safe-area-inset-right);
-  --safe-bottom: env(safe-area-inset-bottom);
-}
-
-/* util p/ heros em tela cheia no mobile sem “pulo” */
-.hero,
-.vh-screen {
-  min-height: 100dvh;
-}
-
-/* Evita scroll lateral fantasma globalmente */
-html,
-body {
-  overflow-x: hidden;
-}
-@supports (overflow-x: clip) {
-  html,
-  body {
-    overflow-x: clip;
-  }
-}
-
-/* Reduz animações se o usuário pedir */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ===========================================
-   Utilitários de layout responsivo
-   =========================================== */
-
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin-inline: auto;
-  padding-inline: 16px;
-  min-width: 0; /* impede filhos de estourarem largura */
-}
-
-/* Grids seguros: minmax(0,1fr) evita overflow de conteúdo interno */
-.grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-}
-.card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px;
-}
-
-/* Quebras padronizadas */
-@media (min-width: 640px) {
-  /* sm */
-  .grid.sm\:cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 768px) {
-  /* md */
-  .grid.md\:cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .grid.md\:cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (min-width: 1024px) {
-  /* lg */
-  .grid.lg\:cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .grid.lg\:cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-/* Navbar comum: colapsa itens no mobile */
-.navbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 12px 16px;
-}
-.navbar__spacer {
-  flex: 1;
-}
-
-/* Tabelas grandes: rolagem horizontal */
-.table-wrap {
-  overflow-x: auto; /* momentum nativo nos browsers modernos */
-}
-.table-wrap > table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px; /* evita esmagar demais em mobile */
-}
-
-/* Carrossel básico (snap) */
-.carousel {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-}
-.carousel > * {
-  scroll-snap-align: start;
-  flex: 0 0 auto;
-  min-width: 80%;
-}
-
-/* Áreas seguras para aparelhos com notch */
-.safe-area {
-  padding-left: max(16px, var(--safe-left));
-  padding-right: max(16px, var(--safe-right));
-  padding-bottom: max(16px, var(--safe-bottom));
-}
-
-/* Helpers de largura fluida (evitam width fixa) */
-.w-100 {
-  width: 100%;
-}
-.maxw-1200 {
-  max-width: 1200px;
-}
-
-/* Correção para elementos absolutos/fixos que estouram */
-.fix-outflow {
-  max-width: 100%;
-  left: 0;
-  right: 0;
-}
-
-/* Preferir clamp para títulos responsivos */
-.h1 {
-  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.5rem);
-  line-height: 1.2;
-}
-.h2 {
-  font-size: clamp(1.25rem, 2.5vw + 0.5rem, 2rem);
-}
-
-/* Espaçamentos responsivos simples */
-.section {
-  padding-block: clamp(24px, 5vw, 64px);
-}
-
-/* Sombras e bordas suaves (opcional) */
-.shadow {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-}
-.rounded {
-  border-radius: 12px;
-}
-
-/* Helper de acessibilidade (screen reader only) */
-.visually-hidden {
+/* ===========================================================
+   ACESSIBILIDADE VISUAL
+   =========================================================== */
+.sr-only {
   position: absolute !important;
-  clip: rect(1px, 1px, 1px, 1px);
+  clip: rect(0 0 0 0);
   clip-path: inset(50%);
   width: 1px;
   height: 1px;
   overflow: hidden;
   white-space: nowrap;
-}
-/* === Utilitários anti-overflow e para grids fluídos === */
-.minw-0 { min-width: 0 !important; }
-.maxw-full { max-width: 100% !important; }
-.overflow-x-clip { overflow-x: hidden; }
-@supports (overflow-x: clip) {
-  .overflow-x-clip { overflow-x: clip; }
+  border: 0;
+  padding: 0;
+  margin: 0;
 }
 
-/* Texto que quebra SEM “esmagar” demais */
-.wrap-any { overflow-wrap: anywhere; }
-.wrap-word { overflow-wrap: break-word; word-break: normal; }
-.hyphen-auto { hyphens: auto; -webkit-hyphens: auto; }
-
-/* Grid responsivo por conteúdo: quebra sozinho conforme largura disponível */
-.auto-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-  gap: clamp(12px, 2.8vw, 24px);
+/* ===========================================================
+   UTILITÁRIOS DE TEXTO
+   =========================================================== */
+.hyphen-auto {
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
-/* Container à prova de “explodir” */
-.container {
-  min-width: 0;
+.hyphen-none {
+  -webkit-hyphens: none;
+  hyphens: none;
 }
 
-/* Carrossel/strip com máscara compatível e sem overflow lateral */
+/* ===========================================================
+   FADE (mask-image fix)
+   =========================================================== */
 .mask-fade-x {
   position: relative;
   overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-}
-@supports (overflow: clip) {
-  .mask-fade-x { overflow: clip; }
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
-/* Wrapper de seção com espaçamento fluido */
-.section {
-  padding-block: clamp(24px, 5vw, 64px);
+/* ===========================================================
+   GRIDS BASE
+   =========================================================== */
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
 }
 
-/* Somente em Safari iOS aplicamos momentum scrolling no eixo X */
-@supports (-webkit-touch-callout: none) {
-  .scroll-momentum {
-    -webkit-overflow-scrolling: touch;
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(1rem, 3vw, 1.5rem); /* Usando unidades consistentes */
+}
+
+@media (max-width: 1024px) {
+  .grid-12 {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
 }
+
+@media (max-width: 720px) {
+  .grid-12 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================================================
+   OUTROS
+   =========================================================== */
+/* ⚠️ Removido -webkit-overflow-scrolling (incompatível / legado) */

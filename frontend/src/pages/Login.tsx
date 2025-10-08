@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useUser } from "../contexts/UserContext";
+import { useUser } from "../context/UserContext";
 
 const Container = styled.section`
   --safe-left: env(safe-area-inset-left);
